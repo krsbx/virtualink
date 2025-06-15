@@ -2,10 +2,33 @@
   "name": "@virtualink/huggingface",
   "module": "src/index.ts",
   "type": "module",
+  "dependencies": {
+    "@huggingface/transformers": "^3.5.2"
+  },
   "devDependencies": {
+    "@virtualink/utils": "workspace:*",
     "@types/bun": "latest"
   },
   "peerDependencies": {
     "typescript": "^5.8.3"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/esm/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    },
+    "./*": {
+      "types": "./dist/esm/*.d.ts",
+      "import": "./dist/esm/*.js",
+      "require": "./dist/cjs/*.js"
+    },
+    "./**/*": {
+      "types": "./dist/esm/**/*.d.ts",
+      "import": "./dist/esm/**/*.js",
+      "require": "./dist/cjs/**/*.js"
+    },
+    "./package.json": "./package.json"
   }
+  
 }
