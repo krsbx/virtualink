@@ -1,5 +1,5 @@
 {
-  "name": "engine",
+  "name": "virtualink",
   "type": "module",
   "private": true,
   "devDependencies": {
