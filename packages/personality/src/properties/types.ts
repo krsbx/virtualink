@@ -28,12 +28,33 @@ export interface ObjectProperty<T = any> {
   properties: Record<string, Property<T>>;
 }
 
-export interface ArrayProperty {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface ArrayProperty<T = any> {
   type: typeof PersonaPropertyType.Array;
-  items: Property;
+  items: Property<T>;
 }
 
 export interface EnumProperty<Values extends readonly string[]> {
   type: typeof PersonaPropertyType.Enum;
   values: Values;
 }
+
+export type ParseProperty<T extends Property> = T extends StringProperty
+  ? string
+  : T extends NumberProperty
+    ? number
+    : T extends BooleanProperty
+      ? boolean
+      : T extends EnumProperty<infer Values>
+        ? Values[number]
+        : T extends ObjectProperty
+          ? {
+              [K in keyof T['properties']]: ParseProperty<T['properties'][K]>;
+            }
+          : T extends ArrayProperty
+            ? ParseProperty<T['items']>[]
+            : never;
+
+export type ParseFullProperty<T extends Record<string, Property>> = {
+  [K in keyof T]: ParseProperty<T[K]>;
+};
