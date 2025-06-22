@@ -1,5 +1,7 @@
 import type { PersonaPropertyType } from './constants';
 
+export type AllowedEnumValues = readonly string[] | readonly number[];
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Property<T = any> =
   | StringProperty
@@ -7,8 +9,7 @@ export type Property<T = any> =
   | BooleanProperty
   | ObjectProperty
   | ArrayProperty
-  // @ts-expect-error Ignore the any type
-  | EnumProperty<T>;
+  | EnumProperty<T extends AllowedEnumValues ? T : never>;
 
 export interface StringProperty {
   type: typeof PersonaPropertyType.String;
@@ -34,20 +35,22 @@ export interface ArrayProperty<T = any> {
   items: Property<T> | Property<T>[];
 }
 
-export interface EnumProperty<Values extends readonly string[]> {
+export interface EnumProperty<Values extends AllowedEnumValues> {
   type: typeof PersonaPropertyType.Enum;
   values: Values;
 }
 
 export type ParseProperty<
   T extends Property,
-  StringAutoComplete extends boolean = false,
+  FixAutoComplete extends boolean = false,
 > = T extends StringProperty
-  ? StringAutoComplete extends true
+  ? FixAutoComplete extends true
     ? string & {}
     : string
   : T extends NumberProperty
-    ? number
+    ? FixAutoComplete extends true
+      ? number & {}
+      : number
     : T extends BooleanProperty
       ? boolean
       : T extends EnumProperty<infer Values>
@@ -59,8 +62,9 @@ export type ParseProperty<
           : T extends ArrayProperty<infer Item>
             ? T['items'] extends Array<Property<Item>>
               ? ParseProperty<T['items'][number], true>[]
-              : // @ts-expect-error Ignore the any type
-                ParseProperty<T['items']>[]
+              : T['items'] extends Property<Item>
+                ? ParseProperty<T['items']>[]
+                : never
             : never;
 
 export type ParseFullProperty<T extends Record<string, Property>> = {
