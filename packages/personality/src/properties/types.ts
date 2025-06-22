@@ -31,7 +31,7 @@ export interface ObjectProperty<T = any> {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface ArrayProperty<T = any> {
   type: typeof PersonaPropertyType.Array;
-  items: Property<T>;
+  items: Property<T> | Property<T>[];
 }
 
 export interface EnumProperty<Values extends readonly string[]> {
@@ -39,8 +39,13 @@ export interface EnumProperty<Values extends readonly string[]> {
   values: Values;
 }
 
-export type ParseProperty<T extends Property> = T extends StringProperty
-  ? string
+export type ParseProperty<
+  T extends Property,
+  StringAutoComplete extends boolean = false,
+> = T extends StringProperty
+  ? StringAutoComplete extends true
+    ? string & {}
+    : string
   : T extends NumberProperty
     ? number
     : T extends BooleanProperty
@@ -51,8 +56,11 @@ export type ParseProperty<T extends Property> = T extends StringProperty
           ? {
               [K in keyof T['properties']]: ParseProperty<T['properties'][K]>;
             }
-          : T extends ArrayProperty
-            ? ParseProperty<T['items']>[]
+          : T extends ArrayProperty<infer Item>
+            ? T['items'] extends Array<Property<Item>>
+              ? ParseProperty<T['items'][number], true>[]
+              : // @ts-expect-error Ignore the any type
+                ParseProperty<T['items']>[]
             : never;
 
 export type ParseFullProperty<T extends Record<string, Property>> = {
