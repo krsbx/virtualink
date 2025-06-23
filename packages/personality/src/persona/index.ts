@@ -1,42 +1,57 @@
-import type { ParseFullProperty, Property } from '../properties/types';
+import type { Property } from '../properties/types';
 import { DefaultPersonaEmotions, DefaultPersonaOutput } from './constants';
-import type { VirtualPersonaOptions } from './types';
+import type { ParsePersonaOutput, VirtualPersonaOptions } from './types';
 
 export class VirtualPersona<
   ExpectedOutput extends Record<string, Property> = DefaultPersonaOutput,
-  Emotions extends readonly string[] = typeof DefaultPersonaEmotions,
+  Emotions extends readonly string[] = DefaultPersonaEmotions,
 > {
   private _name: string;
   private _background: string;
   private _expectedOutput: ExpectedOutput;
   private _emotions: Emotions;
 
-  constructor(options: VirtualPersonaOptions<ExpectedOutput>);
+  public readonly _output!: ParsePersonaOutput<ExpectedOutput, Emotions>;
+
+  constructor(options: VirtualPersonaOptions<ExpectedOutput, Emotions>);
   constructor(name: string, background: string);
   constructor(name: string, background: string, expectedOutput: ExpectedOutput);
+  constructor(
+    name: string,
+    background: string,
+    expectedOutput: ExpectedOutput,
+    emotions: Emotions
+  );
   constructor(
     ...args:
       | [VirtualPersonaOptions<ExpectedOutput>]
       | [name: string, background: string]
       | [name: string, background: string, expectedOutput: ExpectedOutput]
+      | [
+          name: string,
+          background: string,
+          expectedOutput: ExpectedOutput,
+          emotions: Emotions,
+        ]
   ) {
     if (args.length === 1) {
-      const { name, background, expectedOutput } = args[0];
+      const { name, background, expectedOutput, emotions } = args[0];
 
       this._name = name;
       this._background = background;
       this._expectedOutput = (expectedOutput ??
         DefaultPersonaOutput) as ExpectedOutput;
+      this._emotions = (emotions ?? DefaultPersonaEmotions) as Emotions;
     } else {
-      const [name, background, expectedOutput] = args;
+      const [name, background, expectedOutput, emotions] = args;
 
       this._name = name;
       this._background = background;
+
       this._expectedOutput = (expectedOutput ??
         DefaultPersonaOutput) as ExpectedOutput;
+      this._emotions = (emotions ?? DefaultPersonaEmotions) as Emotions;
     }
-
-    this._emotions = DefaultPersonaEmotions as unknown as Emotions;
   }
 
   public get name() {
@@ -79,9 +94,7 @@ export class VirtualPersona<
     return this as unknown as VirtualPersona<ExpectedOutput, NewEmotions>;
   }
 
-  public get infer() {
-    return null as unknown as ParseFullProperty<ExpectedOutput> & {
-      emotion: Emotions[number];
-    };
+  public infer(): this['_output'] {
+    return null as never;
   }
 }

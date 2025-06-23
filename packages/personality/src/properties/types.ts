@@ -1,6 +1,14 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 import type { PersonaPropertyType } from './constants';
 
 export type AllowedEnumValues = readonly string[] | readonly number[];
+
+export interface CommonProperty<Type extends PersonaPropertyType> {
+  /** A description of the property, useful for a better model output */
+  description?: string;
+  /** The type of the property to be expected */
+  type: Type;
+}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Property<T = any> =
@@ -11,32 +19,32 @@ export type Property<T = any> =
   | ArrayProperty
   | EnumProperty<T extends AllowedEnumValues ? T : never>;
 
-export interface StringProperty {
-  type: typeof PersonaPropertyType.String;
-}
+export interface StringProperty
+  extends CommonProperty<typeof PersonaPropertyType.String> {}
 
-export interface NumberProperty {
-  type: typeof PersonaPropertyType.Number;
-}
+export interface NumberProperty
+  extends CommonProperty<typeof PersonaPropertyType.Number> {}
 
-export interface BooleanProperty {
-  type: typeof PersonaPropertyType.Boolean;
-}
+export interface BooleanProperty
+  extends CommonProperty<typeof PersonaPropertyType.Boolean> {}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface ObjectProperty<T = any> {
-  type: typeof PersonaPropertyType.Object;
+export interface ObjectProperty<T = any>
+  extends CommonProperty<typeof PersonaPropertyType.Object> {
+  /** The properties of the defined object */
   properties: Record<string, Property<T>>;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface ArrayProperty<T = any> {
-  type: typeof PersonaPropertyType.Array;
+export interface ArrayProperty<T = any>
+  extends CommonProperty<typeof PersonaPropertyType.Array> {
+  /** The type of the items in the array */
   items: Property<T> | Property<T>[];
 }
 
-export interface EnumProperty<Values extends AllowedEnumValues> {
-  type: typeof PersonaPropertyType.Enum;
+export interface EnumProperty<Values extends AllowedEnumValues>
+  extends CommonProperty<typeof PersonaPropertyType.Enum> {
+  /** The possible values of the enum */
   values: Values;
 }
 
