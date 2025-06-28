@@ -2,6 +2,7 @@ import type { Property } from '../properties/types';
 
 export const DefaultPersonaOutput = {
   response: {
+    description: 'The response to the user input.',
     type: 'string',
   },
 } satisfies Record<string, Property>;

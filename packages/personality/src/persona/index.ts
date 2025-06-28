@@ -1,5 +1,6 @@
 import type { Property } from '../properties/types';
 import { DefaultPersonaEmotions, DefaultPersonaOutput } from './constants';
+import { propertyToPrompt } from './prompter';
 import type { ParsePersonaOutput, VirtualPersonaOptions } from './types';
 
 export class VirtualPersona<
@@ -92,6 +93,35 @@ export class VirtualPersona<
     this._emotions = emotions as unknown as Emotions;
 
     return this as unknown as VirtualPersona<ExpectedOutput, NewEmotions>;
+  }
+
+  public toPrompt() {
+    const system = `You are ${this._name}. ${this._background}${this._background.endsWith('.') ? '' : '.'}`;
+
+    let user = `
+Instructions:
+  - Return only a valid flat JSON object — no extra formatting or explanation.
+  - Your response should be aligned with your given background and name.
+  - Your response should be in the following format:`;
+
+    for (const [key, value] of Object.entries(this._expectedOutput)) {
+      user += `\n${propertyToPrompt(key, value, 4)}`;
+    }
+
+    user += `\n${propertyToPrompt(
+      'emotion',
+      {
+        values: this._emotions,
+        description: 'Your current emotion based on the user input.',
+        type: 'enum',
+      },
+      4
+    )}`;
+
+    return {
+      system: system.trim(),
+      user: user.trim(),
+    };
   }
 
   public infer(): this['_output'] {
