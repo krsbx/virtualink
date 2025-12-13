@@ -27,9 +27,17 @@ export function propertyToPrompt(
       break;
 
     case PersonaPropertyType.ENUM: {
-      const values = (property.values as AllowedEnumValues).map((value) =>
-        typeof value === 'string' ? `"${value}"` : `${value}`
-      );
+      const values = (property.values as AllowedEnumValues).map((value) => {
+        if (typeof value === 'string') {
+          return `"value"`;
+        }
+
+        if (typeof value === 'number') {
+          return value;
+        }
+
+        return JSON.stringify(value);
+      });
 
       prompts.push(
         `${' '.repeat(basePadding)}Write it one of the following : ${values.join(', ')}`
@@ -68,7 +76,11 @@ export function propertyToPrompt(
   }
 
   prompts.forEach((_, id) => {
-    prompts[id] = prompts[id]!.padStart(basePadding + 2, ' ');
+    const prompt = prompts[id];
+
+    if (!prompt) return;
+
+    prompts[id] = prompt.padStart(basePadding + 2, ' ');
   });
 
   return prompts.join('\n');

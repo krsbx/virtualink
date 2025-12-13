@@ -1,13 +1,26 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 import type { PersonaPropertyType } from './constants';
 
-export type AllowedEnumValues = readonly string[] | readonly number[];
+export type AllowedEnumValues =
+  | readonly string[]
+  | readonly number[]
+  | readonly { value: string; description?: string }[];
 
 export interface CommonProperty<Type extends PersonaPropertyType> {
   /** A description of the property, useful for a better model output */
   description?: string;
   /** The type of the property to be expected */
   type: Type;
+}
+
+export interface EmotionProperty<
+  Name extends string = string,
+  Description extends string = string,
+> {
+  /** The name of the emotion */
+  name: Name;
+  /** A description of the emotion, useful for a better model output */
+  description?: Description;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

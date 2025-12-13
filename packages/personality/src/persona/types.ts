@@ -1,4 +1,8 @@
-import type { ParseFullProperty, Property } from '../properties/types';
+import type {
+  EmotionProperty,
+  ParseFullProperty,
+  Property,
+} from '../properties/types';
 
 export interface BaseVirtualPersonaOptions {
   name: string;
@@ -24,4 +28,40 @@ export type ParsePersonaOutput<
   Emotions extends readonly string[],
 > = ParseFullProperty<ExpectedOutput> & {
   emotion: Emotions[number];
+};
+
+export interface PersonaDefition<
+  Name extends string,
+  Background extends string,
+  Code extends string | null,
+  ExpectedOutput extends Record<string, Property>,
+  ExpectedEmotion extends readonly EmotionProperty[],
+> {
+  /**
+   * The name of the persona
+   */
+  name: Name;
+  /**
+   * The background of the persona
+   */
+  background: Background;
+  /**
+   * The code of the persona, will be used to store the prompt history informations
+   */
+  code?: Code;
+  /**
+   * Expected output format from the persona
+   */
+  output: ExpectedOutput;
+  /**
+   * Expected emotion output from the persona
+   */
+  emotion: ExpectedEmotion;
+}
+
+export type PersonaOutput<
+  ExpectedOutput extends Record<string, Property>,
+  ExpectedEmotion extends readonly EmotionProperty[],
+> = ParseFullProperty<ExpectedOutput> & {
+  emotion: ExpectedEmotion[number]['name'];
 };

@@ -1,102 +1,159 @@
-import type { Property } from '../properties/types';
-import { DefaultPersonaEmotions, DefaultPersonaOutput } from './constants';
+import type { EmotionProperty, Property } from '../properties/types';
 import { propertyToPrompt } from './prompter';
-import type { ParsePersonaOutput, VirtualPersonaOptions } from './types';
+import type { PersonaDefition, PersonaOutput } from './types';
 
 export class VirtualPersona<
-  ExpectedOutput extends Record<string, Property> = DefaultPersonaOutput,
-  Emotions extends readonly string[] = DefaultPersonaEmotions,
+  Name extends string,
+  Background extends string,
+  Code extends string | null,
+  ExpectedOutput extends Record<string, Property>,
+  ExpectedEmotion extends readonly EmotionProperty[],
 > {
-  private _name: string;
-  private _background: string;
-  private _expectedOutput: ExpectedOutput;
-  private _emotions: Emotions;
+  public readonly _output!: PersonaOutput<ExpectedOutput, ExpectedEmotion>;
 
-  public readonly _output!: ParsePersonaOutput<ExpectedOutput, Emotions>;
+  public readonly definition: PersonaDefition<
+    Name,
+    Background,
+    Code,
+    ExpectedOutput,
+    ExpectedEmotion
+  >;
 
-  constructor(options: VirtualPersonaOptions<ExpectedOutput, Emotions>);
-  constructor(name: string, background: string);
-  constructor(name: string, background: string, expectedOutput: ExpectedOutput);
-  constructor(
-    name: string,
-    background: string,
-    expectedOutput: ExpectedOutput,
-    emotions: Emotions
+  public constructor();
+  public constructor(
+    definition: PersonaDefition<
+      Name,
+      Background,
+      Code,
+      ExpectedOutput,
+      ExpectedEmotion
+    >
   );
-  constructor(
+  public constructor(
+    name: Name,
+    background: Background,
+    output: ExpectedOutput
+  );
+  public constructor(
+    name: Name,
+    background: Background,
+    output: ExpectedOutput,
+    emotion: ExpectedEmotion
+  );
+  public constructor(
     ...args:
-      | [VirtualPersonaOptions<ExpectedOutput>]
-      | [name: string, background: string]
-      | [name: string, background: string, expectedOutput: ExpectedOutput]
+      | []
       | [
-          name: string,
-          background: string,
-          expectedOutput: ExpectedOutput,
-          emotions: Emotions,
+          PersonaDefition<
+            Name,
+            Background,
+            Code,
+            ExpectedOutput,
+            ExpectedEmotion
+          >,
+        ]
+      | [
+          name: Name,
+          background: Background,
+          output: ExpectedOutput,
+          emotion?: ExpectedEmotion,
         ]
   ) {
+    if (args.length === 0) {
+      this.definition = {} as never;
+
+      console.log(
+        '[WARN] VirtualPersona constructor called with no arguments!'
+      );
+      console.log(
+        '[WARN] Please provide a name, background, output, and emotion by calling the proper methods.'
+      );
+
+      return;
+    }
+
     if (args.length === 1) {
-      const { name, background, expectedOutput, emotions } = args[0];
-
-      this._name = name;
-      this._background = background;
-      this._expectedOutput = (expectedOutput ??
-        DefaultPersonaOutput) as ExpectedOutput;
-      this._emotions = (emotions ?? DefaultPersonaEmotions) as Emotions;
+      this.definition = args[0];
     } else {
-      const [name, background, expectedOutput, emotions] = args;
+      const [name, background, output, emotion] = args;
 
-      this._name = name;
-      this._background = background;
-
-      this._expectedOutput = (expectedOutput ??
-        DefaultPersonaOutput) as ExpectedOutput;
-      this._emotions = (emotions ?? DefaultPersonaEmotions) as Emotions;
+      this.definition = {
+        name,
+        background,
+        output,
+        emotion: (emotion ?? []) as never,
+      };
     }
   }
 
-  public get name() {
-    return this._name;
+  public name<Name extends string>(name: Name) {
+    this.definition.name = name as never;
+
+    return this as unknown as VirtualPersona<
+      Name,
+      Background,
+      Code,
+      ExpectedOutput,
+      ExpectedEmotion
+    >;
   }
 
-  public set name(name: string) {
-    this._name = name;
+  public background<Background extends string>(background: Background) {
+    this.definition.background = background as never;
+
+    return this as unknown as VirtualPersona<
+      Name,
+      Background,
+      Code,
+      ExpectedOutput,
+      ExpectedEmotion
+    >;
   }
 
-  public get background() {
-    return this._background;
+  public code<Code extends string | null>(code: Code) {
+    this.definition.code = code as never;
+
+    return this as unknown as VirtualPersona<
+      Name,
+      Background,
+      Code,
+      ExpectedOutput,
+      ExpectedEmotion
+    >;
   }
 
-  public set background(background: string) {
-    this._background = background;
-  }
-
-  public get expectedOutput() {
-    return this._expectedOutput;
-  }
-
-  public defineExpectedOutput<
-    NewExpectedOutput extends Record<string, Property>,
-  >(expectedOutput: NewExpectedOutput) {
-    this._expectedOutput = expectedOutput as unknown as ExpectedOutput;
-
-    return this as unknown as VirtualPersona<NewExpectedOutput, Emotions>;
-  }
-
-  public get emotions() {
-    return this._emotions;
-  }
-
-  public defineEmotions<NewEmotions extends readonly string[]>(
-    emotions: NewEmotions
+  public output<ExpectedOutput extends Record<string, Property>>(
+    output: ExpectedOutput
   ) {
-    this._emotions = emotions as unknown as Emotions;
+    this.definition.output = output as never;
 
-    return this as unknown as VirtualPersona<ExpectedOutput, NewEmotions>;
+    return this as unknown as VirtualPersona<
+      Name,
+      Background,
+      Code,
+      ExpectedOutput,
+      ExpectedEmotion
+    >;
+  }
+
+  public emotion<ExpectedEmotion extends readonly EmotionProperty[]>(
+    emotion: ExpectedEmotion
+  ) {
+    this.definition.emotion = emotion as never;
+
+    return this as unknown as VirtualPersona<
+      Name,
+      Background,
+      Code,
+      ExpectedOutput,
+      ExpectedEmotion
+    >;
   }
 
   public toPrompt() {
-    const system = `You are ${this._name}. ${this._background}${this._background.endsWith('.') ? '' : '.'}`;
+    const { name, background, output, emotion } = this.definition;
+
+    const system = `You are ${name}. ${background}${background.endsWith('.') ? '' : '.'}`;
 
     let user = `
 Instructions:
@@ -104,14 +161,14 @@ Instructions:
   - Your response should be aligned with your given background and name.
   - Your response should be in the following format:`;
 
-    for (const [key, value] of Object.entries(this._expectedOutput)) {
+    for (const [key, value] of Object.entries(output)) {
       user += `\n${propertyToPrompt(key, value, 4)}`;
     }
 
     user += `\n${propertyToPrompt(
       'emotion',
       {
-        values: this._emotions,
+        values: emotion ?? [],
         description: 'Your current emotion based on the user input.',
         type: 'enum',
       },
