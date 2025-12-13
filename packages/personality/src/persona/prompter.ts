@@ -14,19 +14,19 @@ export function propertyToPrompt(
   }
 
   switch (property.type) {
-    case PersonaPropertyType.String:
+    case PersonaPropertyType.STRING:
       prompts.push(`${' '.repeat(basePadding)}Write it as a string.`);
       break;
 
-    case PersonaPropertyType.Number:
+    case PersonaPropertyType.NUMBER:
       prompts.push(`${' '.repeat(basePadding)}Write it as a number.`);
       break;
 
-    case PersonaPropertyType.Boolean:
+    case PersonaPropertyType.BOOLEAN:
       prompts.push(`${' '.repeat(basePadding)}Write it as a boolean.`);
       break;
 
-    case PersonaPropertyType.Enum: {
+    case PersonaPropertyType.ENUM: {
       const values = (property.values as AllowedEnumValues).map((value) =>
         typeof value === 'string' ? `"${value}"` : `${value}`
       );
@@ -37,7 +37,7 @@ export function propertyToPrompt(
       break;
     }
 
-    case PersonaPropertyType.Object:
+    case PersonaPropertyType.OBJECT:
       prompts.push(
         `${' '.repeat(basePadding)}Write it as a JSON object with the following properties:`
       );
@@ -47,7 +47,7 @@ export function propertyToPrompt(
       }
       break;
 
-    case PersonaPropertyType.Array: {
+    case PersonaPropertyType.ARRAY: {
       const items = Array.isArray(property.items)
         ? property.items
         : [property.items];

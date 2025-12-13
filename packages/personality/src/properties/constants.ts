@@ -1,10 +1,10 @@
 export const PersonaPropertyType = {
-  String: 'string',
-  Number: 'number',
-  Boolean: 'boolean',
-  Object: 'object',
-  Array: 'array',
-  Enum: 'enum',
+  STRING: 'string',
+  NUMBER: 'number',
+  BOOLEAN: 'boolean',
+  OBJECT: 'object',
+  ARRAY: 'array',
+  ENUM: 'enum',
 } as const;
 
 export type PersonaPropertyType =

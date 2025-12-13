@@ -20,30 +20,30 @@ export type Property<T = any> =
   | EnumProperty<T extends AllowedEnumValues ? T : never>;
 
 export interface StringProperty
-  extends CommonProperty<typeof PersonaPropertyType.String> {}
+  extends CommonProperty<typeof PersonaPropertyType.STRING> {}
 
 export interface NumberProperty
-  extends CommonProperty<typeof PersonaPropertyType.Number> {}
+  extends CommonProperty<typeof PersonaPropertyType.NUMBER> {}
 
 export interface BooleanProperty
-  extends CommonProperty<typeof PersonaPropertyType.Boolean> {}
+  extends CommonProperty<typeof PersonaPropertyType.BOOLEAN> {}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface ObjectProperty<T = any>
-  extends CommonProperty<typeof PersonaPropertyType.Object> {
+  extends CommonProperty<typeof PersonaPropertyType.OBJECT> {
   /** The properties of the defined object */
   properties: Record<string, Property<T>>;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface ArrayProperty<T = any>
-  extends CommonProperty<typeof PersonaPropertyType.Array> {
+  extends CommonProperty<typeof PersonaPropertyType.ARRAY> {
   /** The type of the items in the array */
-  items: Property<T> | Property<T>[];
+  items: Property<T>;
 }
 
 export interface EnumProperty<Values extends AllowedEnumValues>
-  extends CommonProperty<typeof PersonaPropertyType.Enum> {
+  extends CommonProperty<typeof PersonaPropertyType.ENUM> {
   /** The possible values of the enum */
   values: Values;
 }
