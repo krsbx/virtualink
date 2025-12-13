@@ -1,15 +1,19 @@
-import type { EmotionProperty, Property } from '../properties/types';
+import type { EmotionProperty } from '../properties/types';
 import { propertyToPrompt } from './prompter';
-import type { PersonaDefition, PersonaOutput } from './types';
+import type {
+  ParsePersonaOutput,
+  PersonaDefition,
+  PersonaOutput,
+} from './types';
 
 export class VirtualPersona<
   Name extends string,
   Background extends string,
   Code extends string | null,
-  ExpectedOutput extends Record<string, Property>,
+  ExpectedOutput extends PersonaOutput,
   ExpectedEmotion extends readonly EmotionProperty[],
 > {
-  public readonly _output!: PersonaOutput<ExpectedOutput, ExpectedEmotion>;
+  public readonly _output!: ParsePersonaOutput<ExpectedOutput, ExpectedEmotion>;
 
   public readonly definition: PersonaDefition<
     Name,
@@ -73,7 +77,7 @@ export class VirtualPersona<
     }
 
     if (args.length === 1) {
-      this.definition = args[0];
+      this.definition = args[0] as never;
     } else {
       const [name, background, output, emotion] = args;
 
@@ -81,8 +85,8 @@ export class VirtualPersona<
         name,
         background,
         output,
-        emotion: (emotion ?? []) as never,
-      };
+        emotion: emotion ?? [],
+      } as never;
     }
   }
 
@@ -122,9 +126,7 @@ export class VirtualPersona<
     >;
   }
 
-  public output<ExpectedOutput extends Record<string, Property>>(
-    output: ExpectedOutput
-  ) {
+  public output<ExpectedOutput extends PersonaOutput>(output: ExpectedOutput) {
     this.definition.output = output as never;
 
     return this as unknown as VirtualPersona<
@@ -152,6 +154,14 @@ export class VirtualPersona<
 
   public toPrompt() {
     const { name, background, output, emotion } = this.definition;
+
+    if (!name) {
+      throw new Error('Name is required');
+    }
+
+    if (!background) {
+      throw new Error('Background is required');
+    }
 
     const system = `You are ${name}. ${background}${background.endsWith('.') ? '' : '.'}`;
 

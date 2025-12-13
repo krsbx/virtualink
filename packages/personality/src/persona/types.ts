@@ -2,6 +2,7 @@ import type {
   EmotionProperty,
   ParseFullProperty,
   Property,
+  StringProperty,
 } from '../properties/types';
 
 export interface BaseVirtualPersonaOptions {
@@ -25,9 +26,13 @@ export interface VirtualPersonaOptions<
 
 export type ParsePersonaOutput<
   ExpectedOutput extends Record<string, Property>,
-  Emotions extends readonly string[],
+  ExpectedEmotion extends readonly EmotionProperty[],
 > = ParseFullProperty<ExpectedOutput> & {
-  emotion: Emotions[number];
+  emotion: ExpectedEmotion[number]['name'];
+};
+
+export type PersonaOutput = Record<string, Property> & {
+  response: StringProperty;
 };
 
 export interface PersonaDefition<
@@ -58,10 +63,3 @@ export interface PersonaDefition<
    */
   emotion: ExpectedEmotion;
 }
-
-export type PersonaOutput<
-  ExpectedOutput extends Record<string, Property>,
-  ExpectedEmotion extends readonly EmotionProperty[],
-> = ParseFullProperty<ExpectedOutput> & {
-  emotion: ExpectedEmotion[number]['name'];
-};
