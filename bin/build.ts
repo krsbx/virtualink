@@ -2,7 +2,11 @@ import { $ } from 'bun';
 
 type PackagePath = `packages/${string & {}}`;
 
-const series: PackagePath[] = ['packages/utils'];
+const series: PackagePath[] = [
+  'packages/utils',
+  'packages/personality',
+  'packages/memory',
+];
 
 function logBuild(dir: string | string[]) {
   const dirs = (Array.isArray(dir) ? dir : [dir]).map((dir) =>

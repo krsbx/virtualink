@@ -28,6 +28,11 @@
       "import": "./dist/esm/**/*.js",
       "require": "./dist/cjs/**/*.js"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./persona": {
+      "types": "./dist/esm/persona/index.d.ts",
+      "import": "./dist/esm/persona/index.js",
+      "require": "./dist/cjs/persona/index.js"
+    }
   }
 }

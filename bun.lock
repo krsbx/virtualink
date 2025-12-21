@@ -8,14 +8,14 @@
         "@commitlint/cli": "^19.8.1",
         "@commitlint/config-conventional": "^19.8.1",
         "@eslint/js": "^9.39.2",
-        "@types/bun": "^1.3.4",
+        "@types/bun": "^1.3.5",
         "eslint": "^9.39.2",
         "eslint-plugin-react": "^7.37.5",
         "globals": "^16.5.0",
         "husky": "^9.1.7",
         "lint-staged": "^15.5.2",
         "prettier": "3.5.3",
-        "typescript-eslint": "^8.49.0",
+        "typescript-eslint": "^8.50.0",
       },
       "peerDependencies": {
         "typescript": "^5.8.3",
@@ -32,8 +32,14 @@
     },
     "packages/memory": {
       "name": "@virtualink/memory",
+      "version": "0.1.0",
+      "dependencies": {
+        "@ignisia/sql": "^0.3.0",
+        "@virtualink/personality": "workspace:*",
+      },
       "devDependencies": {
         "@types/bun": "latest",
+        "@virtualink/utils": "workspace:*",
       },
       "peerDependencies": {
         "typescript": "^5.8.3",
@@ -178,6 +184,8 @@
     "@humanwhocodes/module-importer": ["@humanwhocodes/module-importer@1.0.1", "", {}, "sha512-bxveV4V8v5Yb4ncFTT3rPSgZBOpCkjfK0y4oVVVJwIuDVBRMDXrPyXRL988i5ap9m9bnyEEjWfm5WkBmtffLfA=="],
 
     "@humanwhocodes/retry": ["@humanwhocodes/retry@0.4.3", "", {}, "sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ=="],
+
+    "@ignisia/sql": ["@ignisia/sql@0.3.0", "", { "peerDependencies": { "typescript": "^5" } }, "sha512-pAP8dGCMJ0LeiHWD5p19Tl0kxCX0RCSXL+kXM5CaG4wnzuy1rOk0tAiC7qopQyNFvK4yq5k7XfMbzJe64O+s9g=="],
 
     "@isaacs/cliui": ["@isaacs/cliui@8.0.2", "", { "dependencies": { "string-width": "^5.1.2", "string-width-cjs": "npm:string-width@^4.2.0", "strip-ansi": "^7.0.1", "strip-ansi-cjs": "npm:strip-ansi@^6.0.1", "wrap-ansi": "^8.1.0", "wrap-ansi-cjs": "npm:wrap-ansi@^7.0.0" } }, "sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA=="],
 

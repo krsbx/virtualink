@@ -1,11 +1,37 @@
 {
   "name": "@virtualink/memory",
-  "module": "index.ts",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
+  "version": "0.1.0",
+  "dependencies": {
+    "@ignisia/sql": "^0.3.0",
+    "@virtualink/personality": "workspace:*"
+  },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@virtualink/utils": "workspace:*"
   },
   "peerDependencies": {
     "typescript": "^5.8.3"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/esm/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    },
+    "./*": {
+      "types": "./dist/esm/*.d.ts",
+      "import": "./dist/esm/*.js",
+      "require": "./dist/cjs/*.js"
+    },
+    "./**/*": {
+      "types": "./dist/esm/**/*.d.ts",
+      "import": "./dist/esm/**/*.js",
+      "require": "./dist/cjs/**/*.js"
+    },
+    "./package.json": "./package.json"
   }
 }
