@@ -56,6 +56,15 @@
         "typescript": "^5.8.3",
       },
     },
+    "packages/renderer": {
+      "name": "@virtualink/renderer",
+      "devDependencies": {
+        "@types/bun": "latest",
+      },
+      "peerDependencies": {
+        "typescript": "^5",
+      },
+    },
     "packages/utils": {
       "name": "@virtualink/utils",
       "version": "0.1.0",
@@ -276,6 +285,8 @@
     "@virtualink/memory": ["@virtualink/memory@workspace:packages/memory"],
 
     "@virtualink/personality": ["@virtualink/personality@workspace:packages/personality"],
+
+    "@virtualink/renderer": ["@virtualink/renderer@workspace:packages/renderer"],
 
     "@virtualink/utils": ["@virtualink/utils@workspace:packages/utils"],
 
